@@ -354,7 +354,9 @@ function renderShell() {
       <div class="modal-dialog">
         <div class="modal-header">
           <div style="font-size: 15px; font-weight: 600;">Neo4j Database Settings</div>
-          <button class="btn btn-ghost" id="btnCloseSettings" style="padding: 0.35rem;">✕</button>
+          <button class="btn btn-ghost" id="btnCloseSettings" style="padding: 0.35rem;" aria-label="Close">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
         <form id="formSaveSettings">
           <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem;">
@@ -393,7 +395,9 @@ function renderShell() {
       <div class="modal-dialog">
         <div class="modal-header">
           <div style="font-size: 15px; font-weight: 600;">Register New Customer</div>
-          <button class="btn btn-ghost" id="btnCloseAddCustomer" style="padding: 0.35rem;">✕</button>
+          <button class="btn btn-ghost" id="btnCloseAddCustomer" style="padding: 0.35rem;" aria-label="Close">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
         <form id="formCreateCustomer">
           <div class="modal-body" style="display: flex; flex-direction: column; gap: 0.85rem;">
@@ -1117,12 +1121,27 @@ function renderGraphExplorerPage(container) {
           <p style="font-size: 13px; color: var(--text-tertiary); max-width: 380px; margin: 0.5rem 0 1.25rem 0; line-height: 1.5;">
             To keep exploration focused, nodes load on demand. Search for any customer, vehicle, or policy above, or click a quick starter:
           </p>
-          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; max-width: 440px;">
-            <button class="btn btn-secondary graph-quick-pill" data-query="Arjun Mehta">👤 Arjun Mehta</button>
-            <button class="btn btn-secondary graph-quick-pill" data-query="Vinayak Tripathi">👤 Vinayak Tripathi</button>
-            <button class="btn btn-secondary graph-quick-pill" data-query="TN01AB1234">🚘 TN01AB1234</button>
-            <button class="btn btn-secondary graph-quick-pill" data-query="5001">🛡️ Policy #5001</button>
-            <button class="btn btn-secondary graph-quick-pill" data-query="9001">📑 Claim #9001</button>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; max-width: 460px;">
+            <button class="btn btn-secondary graph-quick-pill" data-query="Arjun Mehta">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 5px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Arjun Mehta
+            </button>
+            <button class="btn btn-secondary graph-quick-pill" data-query="Vinayak Tripathi">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 5px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Vinayak Tripathi
+            </button>
+            <button class="btn btn-secondary graph-quick-pill" data-query="TN01AB1234">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 5px;"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C1.4 11.2 1 12 1 13v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+              TN01AB1234
+            </button>
+            <button class="btn btn-secondary graph-quick-pill" data-query="5001">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 5px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Policy #5001
+            </button>
+            <button class="btn btn-secondary graph-quick-pill" data-query="9001">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 5px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              Claim #9001
+            </button>
           </div>
         </div>
 
@@ -2172,7 +2191,10 @@ function handleGlobalSearch(term) {
     cMatches.forEach(c => {
       html += `
         <div class="cmd-item" data-type="Customer" data-id="${c.customer_id}">
-          <span style="pointer-events: none;">👤 ${c.name}</span>
+          <span style="pointer-events: none; display: flex; align-items: center; gap: 8px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            ${c.name}
+          </span>
           <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); pointer-events: none;">${c.license_no}</span>
         </div>
       `;
@@ -2184,7 +2206,10 @@ function handleGlobalSearch(term) {
     vMatches.forEach(v => {
       html += `
         <div class="cmd-item" data-type="Vehicle" data-id="${v.vehicle_id}">
-          <span style="pointer-events: none;">🚘 ${v.brand} ${v.vehicle_model}</span>
+          <span style="pointer-events: none; display: flex; align-items: center; gap: 8px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C1.4 11.2 1 12 1 13v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+            ${v.brand} ${v.vehicle_model}
+          </span>
           <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); pointer-events: none;">${v.reg_no}</span>
         </div>
       `;
@@ -2196,7 +2221,10 @@ function handleGlobalSearch(term) {
     pMatches.forEach(p => {
       html += `
         <div class="cmd-item" data-type="Policy" data-id="${p.policy_id}">
-          <span style="pointer-events: none;">🛡️ Policy #${p.policy_id} (${p.policy_type})</span>
+          <span style="pointer-events: none; display: flex; align-items: center; gap: 8px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Policy #${p.policy_id} (${p.policy_type})
+          </span>
           <span class="badge badge-${p.policy_status.toLowerCase()}" style="pointer-events: none;">${p.policy_status}</span>
         </div>
       `;
@@ -2208,7 +2236,10 @@ function handleGlobalSearch(term) {
     clMatches.forEach(cl => {
       html += `
         <div class="cmd-item" data-type="Claim" data-id="${cl.claim_id}">
-          <span style="pointer-events: none;">📑 Claim #${cl.claim_id} (₹${Number(cl.claim_amount).toLocaleString()})</span>
+          <span style="pointer-events: none; display: flex; align-items: center; gap: 8px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Claim #${cl.claim_id} (₹${Number(cl.claim_amount).toLocaleString()})
+          </span>
           <span class="badge badge-${cl.claim_status.toLowerCase()}" style="pointer-events: none;">${cl.claim_status}</span>
         </div>
       `;

@@ -9,14 +9,14 @@
 
 ---
 
-## 📌 Project Overview
+## Project Overview
 This project is Digital Assignment 3 (DA3) for **Database Systems (BACSE202)**. It re-implements the **Vehicle Insurance Management System** developed in DA1 (Database Design & ER Modeling) and DA2 (Oracle SQL & PL/SQL) using **Neo4j**, a modern Labeled Property Graph (LPG) database, powered by the **Cypher Query Language**.
 
 The project models the complete domain—customers, vehicles, insurance policies, claims, payment transactions, and supporting documents/receipts—replacing relational foreign keys and costly multi-table joins with native, pointer-based graph relationships (**Index-Free Adjacency**).
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 * **Live Neo4j AuraDB Integration:** Full integration via the official `neo4j-driver` over Bolt protocol (`neo4j+s://`).
 * **Interactive Physics Graph Visualizer:** Real-time force-directed canvas displaying nodes (`Customer`, `Vehicle`, `Policy`, `Claim`, `Payment`) and relationships (`OWNS`, `INSURED_BY`, `GENERATES`, `PAID_THROUGH`) with zoom, pan, drag-and-drop, and property inspection.
@@ -26,7 +26,7 @@ The project models the complete domain—customers, vehicles, insurance policies
 
 ---
 
-## 🗄️ Graph Database Schema & Mapping
+## Graph Database Schema & Mapping
 
 ```
 (:Customer) ──[:OWNS]──> (:Vehicle) ──[:INSURED_BY]──> (:Policy)
@@ -61,7 +61,7 @@ The project models the complete domain—customers, vehicles, insurance policies
 
 ---
 
-## 🛠️ Getting Started
+## Getting Started
 
 ### 1. Prerequisites
 * [Node.js](https://nodejs.org/) (v18 or higher)
@@ -98,7 +98,7 @@ Visit **`http://localhost:5173/`** to interact with the application.
 
 ---
 
-## 📜 Executing Cypher Scripts on Neo4j AuraDB
+## Executing Cypher Scripts on Neo4j AuraDB
 
 You can execute the setup Cypher scripts either directly via the web interface or in the **Neo4j Workspace Query Editor**:
 
@@ -124,7 +124,7 @@ ORDER BY cl.claim_id;
 
 ---
 
-## 📊 Project Structure
+## Project Structure
 
 ```
 ├── .env                  # Neo4j credentials & student metadata (git-ignored)
@@ -141,12 +141,12 @@ ORDER BY cl.claim_id;
 
 ---
 
-## 📄 Academic Submission Notes (BACSE202)
+## Academic Submission Notes (BACSE202)
 * The complete 11-section handwritten report draft with labeled screenshot figures (Figures 1 through 10) is located at `da3_final_report_draft.md`.
 * Refer to `da3_implementation_plan.md` for the step-by-step evaluation guide and viva checklist.
 
 ---
 
-## 📜 License
+## License
 
 This project is licensed under the [MIT License](LICENSE).
