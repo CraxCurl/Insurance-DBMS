@@ -63,6 +63,29 @@ const routes = {
   schema: { title: 'Schema', group: 'Developer Tools' }
 };
 
+// ==========================================
+// CENTRALIZED DESIGN-SYSTEM FORMATTERS
+// ==========================================
+function formatCurrency(val) {
+  const num = Number(val) || 0;
+  return `₹${num.toLocaleString('en-IN')}`;
+}
+
+function renderBalanceCell(balance) {
+  const num = Number(balance) || 0;
+  if (num === 0) {
+    return `<span class="text-muted text-mono">₹0</span>`;
+  }
+  return `<span class="text-mono" style="color: var(--text-primary); font-weight: 500;">₹${num.toLocaleString('en-IN')}</span>`;
+}
+
+function renderStatusBadge(status, customLabel) {
+  const s = String(status || 'UNKNOWN').trim().toUpperCase();
+  const cls = s.toLowerCase();
+  const label = customLabel || s;
+  return `<span class="badge badge-${cls}"><span class="badge-dot"></span>${label}</span>`;
+}
+
 // 1. Initialize and Fetch Live Data from Neo4j
 async function initApp() {
   renderShell();
@@ -521,27 +544,27 @@ function renderOverviewPage(container) {
     <section class="metrics-row">
       <div class="metric-card" data-nav="customers">
         <span class="metric-label">Total Customers</span>
-        <span class="metric-value">${m.customers}</span>
+        <span class="metric-value font-mono">${m.customers}</span>
         <span class="metric-meta">Unique policyholders</span>
       </div>
       <div class="metric-card" data-nav="vehicles">
         <span class="metric-label">Registered Vehicles</span>
-        <span class="metric-value">${m.vehicles}</span>
+        <span class="metric-value font-mono">${m.vehicles}</span>
         <span class="metric-meta">Petrol, Diesel, EV, CNG</span>
       </div>
       <div class="metric-card" data-nav="policies">
         <span class="metric-label">Active Policies</span>
-        <span class="metric-value">${m.activePolicies} <span style="font-size: 1rem; color: var(--text-tertiary); font-weight: 400;">/ ${m.policies}</span></span>
-        <span class="metric-meta">₹${(m.totalSumInsured / 100000).toFixed(1)}L total sum insured</span>
+        <span class="metric-value font-mono">${m.activePolicies} <span style="font-size: 1rem; color: var(--text-tertiary); font-weight: 400;">/ ${m.policies}</span></span>
+        <span class="metric-meta">${formatCurrency(m.totalSumInsured)} total coverage</span>
       </div>
       <div class="metric-card" data-nav="claims">
         <span class="metric-label">Total Claims</span>
-        <span class="metric-value">${m.claims}</span>
+        <span class="metric-value font-mono">${m.claims}</span>
         <span class="metric-meta">${m.pendingClaims} pending review</span>
       </div>
       <div class="metric-card" data-nav="payments">
         <span class="metric-label">Collected Premium</span>
-        <span class="metric-value">₹${m.collectedPremium.toLocaleString()}</span>
+        <span class="metric-value font-mono">${formatCurrency(m.collectedPremium)}</span>
         <span class="metric-meta">Total verified receipts</span>
       </div>
     </section>
@@ -560,19 +583,19 @@ function renderOverviewPage(container) {
               <tr>
                 <th>Claim ID</th>
                 <th>Vehicle</th>
-                <th>Amount</th>
+                <th class="num-col">Amount</th>
                 <th>Status</th>
-                <th>Action</th>
+                <th class="center-col">Action</th>
               </tr>
             </thead>
             <tbody>
               ${state.data.claims.filter(c => c.claim_status === 'PENDING').map(c => `
                 <tr data-type="Claim" data-id="${c.claim_id}">
-                  <td style="font-family: var(--font-mono);">#${c.claim_id}</td>
+                  <td class="text-mono font-medium">#${c.claim_id}</td>
                   <td>${c.vehicle_reg}</td>
-                  <td style="font-family: var(--font-mono); font-weight: 500;">₹${Number(c.claim_amount).toLocaleString()}</td>
-                  <td><span class="badge badge-pending">PENDING</span></td>
-                  <td>
+                  <td class="num-col">${formatCurrency(c.claim_amount)}</td>
+                  <td>${renderStatusBadge(c.claim_status)}</td>
+                  <td class="center-col">
                     <button class="btn btn-secondary btn-quick-approve" data-claim-id="${c.claim_id}" style="font-size: 11px; padding: 0.2rem 0.5rem;">
                       Approve
                     </button>
@@ -604,11 +627,11 @@ function renderOverviewPage(container) {
             <tbody>
               ${state.data.policies.slice(0, 5).map(p => `
                 <tr data-type="Policy" data-id="${p.policy_id}">
-                  <td style="font-family: var(--font-mono);">#${p.policy_id}</td>
+                  <td class="text-mono font-medium">#${p.policy_id}</td>
                   <td>${p.policy_type}</td>
-                  <td>${p.vehicle_reg}</td>
-                  <td style="font-family: var(--font-mono);">${p.end_date}</td>
-                  <td><span class="badge badge-${p.policy_status.toLowerCase()}">${p.policy_status}</span></td>
+                  <td class="text-mono">${p.vehicle_reg}</td>
+                  <td class="text-mono text-muted">${p.end_date}</td>
+                  <td>${renderStatusBadge(p.policy_status)}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -632,18 +655,18 @@ function renderOverviewPage(container) {
               <th>Email</th>
               <th>Driving License</th>
               <th>Owned Vehicles</th>
-              <th>Action</th>
+              <th class="center-col">Action</th>
             </tr>
           </thead>
           <tbody>
             ${state.data.customers.slice(0, 5).map(c => `
               <tr data-type="Customer" data-id="${c.customer_id}">
-                <td style="font-family: var(--font-mono);">#${c.customer_id}</td>
+                <td class="text-mono">#${c.customer_id}</td>
                 <td style="font-weight: 500;">${c.name}</td>
                 <td style="color: var(--text-secondary);">${c.email}</td>
-                <td style="font-family: var(--font-mono);">${c.license_no}</td>
+                <td class="text-mono">${c.license_no}</td>
                 <td><span class="badge badge-neutral">${c.vehicle_count} vehicles</span></td>
-                <td><button class="btn btn-ghost" style="font-size: 11px;">View</button></td>
+                <td class="center-col"><button class="btn btn-ghost" style="font-size: 11px;">View</button></td>
               </tr>
             `).join('')}
           </tbody>
@@ -800,7 +823,7 @@ function renderVehiclesPage(container) {
         <td style="font-family: var(--font-mono);">${v.mfg_year}</td>
         <td>${v.owner_name}</td>
         <td>
-          ${v.policy_id ? `<span class="badge badge-${v.policy_status.toLowerCase()}">Policy #${v.policy_id}</span>` : `<span class="badge badge-neutral">Uninsured</span>`}
+          ${v.policy_id ? renderStatusBadge(v.policy_status, `Policy #${v.policy_id}`) : `<span class="badge badge-neutral"><span class="badge-dot"></span>Uninsured</span>`}
         </td>
         <td style="font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);">${v.chassis_no}</td>
       </tr>
@@ -878,18 +901,21 @@ function renderPoliciesPage(container) {
     const tbody = container.querySelector('#polTableBody');
     if (!tbody) return;
 
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-tertiary);">No policies found.</td></tr>`;
+      return;
+    }
+
     tbody.innerHTML = filtered.map(p => `
       <tr data-type="Policy" data-id="${p.policy_id}">
         <td style="font-family: var(--font-mono); font-weight: 500;">#${p.policy_id}</td>
         <td>${p.policy_type}</td>
         <td style="font-family: var(--font-mono);">${p.vehicle_reg}</td>
-        <td style="font-family: var(--font-mono);">₹${Number(p.premium_amount).toLocaleString()}</td>
-        <td style="font-family: var(--font-mono);">₹${Number(p.sum_insured).toLocaleString()}</td>
-        <td style="font-family: var(--font-mono); font-size: 12px;">${p.start_date} → ${p.end_date}</td>
-        <td><span class="badge badge-${p.policy_status.toLowerCase()}">${p.policy_status}</span></td>
-        <td style="font-family: var(--font-mono); font-weight: 500; color: ${p.balance > 0 ? '#fbbf24' : '#4ade80'};">
-          ₹${p.balance.toLocaleString()}
-        </td>
+        <td class="num-col">${formatCurrency(p.premium_amount)}</td>
+        <td class="num-col">${formatCurrency(p.sum_insured)}</td>
+        <td style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">${p.start_date} → ${p.end_date}</td>
+        <td>${renderStatusBadge(p.policy_status)}</td>
+        <td class="num-col">${renderBalanceCell(p.balance)}</td>
       </tr>
     `).join('');
 
@@ -925,11 +951,11 @@ function renderPoliciesPage(container) {
               <th>Policy ID</th>
               <th>Type</th>
               <th>Vehicle</th>
-              <th>Annual Premium</th>
-              <th>Sum Insured</th>
+              <th class="num-col">Annual Premium</th>
+              <th class="num-col">Sum Insured</th>
               <th>Period</th>
               <th>Status</th>
-              <th>Balance Due</th>
+              <th class="num-col">Balance Due</th>
             </tr>
           </thead>
           <tbody id="polTableBody"></tbody>
@@ -957,17 +983,22 @@ function renderClaimsPage(container) {
     const tbody = container.querySelector('#claimTableBody');
     if (!tbody) return;
 
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-tertiary);">No claims found.</td></tr>`;
+      return;
+    }
+
     tbody.innerHTML = filtered.map(c => `
       <tr data-type="Claim" data-id="${c.claim_id}">
         <td style="font-family: var(--font-mono); font-weight: 500;">#${c.claim_id}</td>
-        <td style="font-family: var(--font-mono);">Policy #${c.policy_id}</td>
+        <td style="font-family: var(--font-mono); color: var(--text-secondary);">Policy #${c.policy_id}</td>
         <td>${c.customer_name}</td>
-        <td style="font-family: var(--font-mono); font-weight: 500;">₹${Number(c.claim_amount).toLocaleString()}</td>
-        <td style="font-family: var(--font-mono);">${c.claim_date}</td>
-        <td><span class="badge badge-${c.claim_status.toLowerCase()}">${c.claim_status}</span></td>
+        <td class="num-col">${formatCurrency(c.claim_amount)}</td>
+        <td style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">${c.claim_date}</td>
+        <td>${renderStatusBadge(c.claim_status)}</td>
         <td><span class="badge badge-neutral">${c.doc_count} docs</span></td>
-        <td>
-          <button class="btn btn-ghost" style="font-size: 11px;">Inspect →</button>
+        <td style="text-align: right;">
+          <button class="btn btn-ghost" style="font-size: 11px; padding: 0.25rem 0.5rem;">Inspect →</button>
         </td>
       </tr>
     `).join('');
@@ -1005,11 +1036,11 @@ function renderClaimsPage(container) {
               <th>Claim ID</th>
               <th>Linked Policy</th>
               <th>Claimant</th>
-              <th>Claim Amount</th>
+              <th class="num-col">Claim Amount</th>
               <th>Date Filed</th>
               <th>Status</th>
               <th>Attachments</th>
-              <th>Action</th>
+              <th style="text-align: right;">Action</th>
             </tr>
           </thead>
           <tbody id="claimTableBody"></tbody>
@@ -1045,20 +1076,22 @@ function renderPaymentsPage(container) {
             <tr>
               <th>Payment ID</th>
               <th>Policy ID</th>
-              <th>Amount</th>
+              <th class="num-col">Amount</th>
               <th>Method</th>
               <th>Payment Date</th>
               <th>Receipt Reference</th>
             </tr>
           </thead>
           <tbody>
-            ${state.data.payments.map(p => `
+            ${state.data.payments.length === 0 ? `
+              <tr><td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-tertiary);">No payments recorded.</td></tr>
+            ` : state.data.payments.map(p => `
               <tr data-type="Payment" data-id="${p.payment_id}">
                 <td style="font-family: var(--font-mono); font-weight: 500;">#${p.payment_id}</td>
-                <td style="font-family: var(--font-mono);">Policy #${p.policy_id}</td>
-                <td style="font-family: var(--font-mono); font-weight: 500;">₹${Number(p.amount).toLocaleString()}</td>
+                <td style="font-family: var(--font-mono); color: var(--text-secondary);">Policy #${p.policy_id}</td>
+                <td class="num-col">${formatCurrency(p.amount)}</td>
                 <td><span class="badge badge-neutral">${p.payment_method}</span></td>
-                <td style="font-family: var(--font-mono);">${p.payment_date}</td>
+                <td style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">${p.payment_date}</td>
                 <td style="font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);">${p.receipt_file || 'None'}</td>
               </tr>
             `).join('')}
@@ -1502,11 +1535,11 @@ function inspectGraphNode(node) {
       </button>
     </div>
 
-    <div style="font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 0.25rem;">${node.label}</div>
+    <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem;">${node.label}</div>
     <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 1rem;">ID: ${node.id}</div>
 
     <div style="font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; margin-bottom: 0.4rem;">Properties</div>
-    <div style="background: #080808; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.65rem; font-family: var(--font-mono); font-size: 11px; display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem;">
+    <div style="background: var(--bg-surface-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.65rem; font-family: var(--font-mono); font-size: 11px; display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem;">
       ${Object.entries(node.data).map(([k, v]) => `
         <div style="display: flex; justify-content: space-between;">
           <span style="color: var(--text-tertiary);">${k}:</span>
@@ -1518,7 +1551,7 @@ function inspectGraphNode(node) {
     <div style="font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; margin-bottom: 0.4rem;">Connected Relationships (${connectedLinks.length})</div>
     <div style="display: flex; flex-direction: column; gap: 0.3rem;">
       ${connectedLinks.map(l => `
-        <div style="font-size: 11px; font-family: var(--font-mono); color: var(--text-secondary); background: #111; padding: 0.35rem 0.5rem; border-radius: 4px;">
+        <div style="font-size: 11px; font-family: var(--font-mono); color: var(--text-secondary); background: var(--bg-surface-hover); padding: 0.35rem 0.5rem; border-radius: 4px;">
           ${l.source === node.id ? `→ [:${l.label}] → ${l.target}` : `← [:${l.label}] ← ${l.source}`}
         </div>
       `).join('') || '<div style="color: var(--text-tertiary); font-size: 12px;">No relationships loaded yet.</div>'}
@@ -1637,7 +1670,7 @@ async function runCurrentStudioQuery() {
     if (meta) meta.innerText = `Error: ${err.message}`;
     const box = document.getElementById('studioResultsTableBox');
     if (box) {
-      box.innerHTML = `<div style="padding: 2rem; color: #f87171; font-family: var(--font-mono); font-size: 13px;">${err.message}</div>`;
+      box.innerHTML = `<div style="padding: 2rem; color: var(--status-danger-text); font-family: var(--font-mono); font-size: 13px;">${err.message}</div>`;
     }
   }
 }
@@ -1654,7 +1687,7 @@ function renderQueryResultsTable(res) {
     html += `<tr>`;
     res.columns.forEach(col => {
       const val = r[col];
-      html += `<td>${val !== null && val !== undefined ? (typeof val === 'object' ? JSON.stringify(val) : val) : ''}</td>`;
+      html += `<td style="font-family: var(--font-mono); font-size: 12px;">${val !== null && val !== undefined ? (typeof val === 'object' ? JSON.stringify(val) : val) : ''}</td>`;
     });
     html += `</tr>`;
   });
@@ -1691,31 +1724,31 @@ function renderSchemaPage(container) {
           </thead>
           <tbody>
             <tr>
-              <td><span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #4ade80;">:Customer</span></td>
+              <td><span class="code-tag">:Customer</span></td>
               <td style="font-family: var(--font-mono);">customer_id (Unique)</td>
               <td>name, email, dob, license_no, phones[]</td>
               <td><code>CUSTOMER</code> + <code>CUSTOMER_PHONE</code></td>
             </tr>
             <tr>
-              <td><span class="badge" style="background: rgba(14, 165, 233, 0.1); color: #38bdf8;">:Vehicle</span></td>
+              <td><span class="code-tag">:Vehicle</span></td>
               <td style="font-family: var(--font-mono);">vehicle_id (Unique)</td>
               <td>reg_no, brand, vehicle_model, fuel_type, mfg_year, engine_no, chassis_no</td>
               <td><code>VEHICLE</code> Table</td>
             </tr>
             <tr>
-              <td><span class="badge" style="background: rgba(99, 102, 241, 0.1); color: #818cf8;">:Policy</span></td>
+              <td><span class="code-tag">:Policy</span></td>
               <td style="font-family: var(--font-mono);">policy_id (Unique)</td>
               <td>policy_type, premium_amount, sum_insured, start_date, end_date, policy_status</td>
               <td><code>POLICY</code> Table</td>
             </tr>
             <tr>
-              <td><span class="badge" style="background: rgba(244, 63, 94, 0.1); color: #fb7185;">:Claim</span></td>
+              <td><span class="code-tag">:Claim</span></td>
               <td style="font-family: var(--font-mono);">claim_id (Unique)</td>
               <td>claim_date, claim_amount, claim_status</td>
               <td><code>CLAIM</code> Table</td>
             </tr>
             <tr>
-              <td><span class="badge" style="background: rgba(168, 85, 247, 0.1); color: #c084fc;">:Payment</span></td>
+              <td><span class="code-tag">:Payment</span></td>
               <td style="font-family: var(--font-mono);">payment_id (Unique)</td>
               <td>payment_date, payment_method, amount</td>
               <td><code>PAYMENT</code> Table</td>
@@ -1744,28 +1777,28 @@ function renderSchemaPage(container) {
           <tbody>
             <tr>
               <td><code>(:Customer)</code></td>
-              <td style="font-family: var(--font-mono); color: #4ade80;">[:OWNS]</td>
+              <td><span class="rel-tag">[:OWNS]</span></td>
               <td><code>(:Vehicle)</code></td>
               <td>1 : M</td>
               <td>Replaces <code>VEHICLE.Customer_ID</code> Foreign Key</td>
             </tr>
             <tr>
               <td><code>(:Vehicle)</code></td>
-              <td style="font-family: var(--font-mono); color: #38bdf8;">[:INSURED_BY]</td>
+              <td><span class="rel-tag">[:INSURED_BY]</span></td>
               <td><code>(:Policy)</code></td>
               <td>1 : 1</td>
               <td>Replaces <code>POLICY.Vehicle_ID</code> Foreign Key</td>
             </tr>
             <tr>
               <td><code>(:Policy)</code></td>
-              <td style="font-family: var(--font-mono); color: #818cf8;">[:GENERATES]</td>
+              <td><span class="rel-tag">[:GENERATES]</span></td>
               <td><code>(:Claim)</code></td>
               <td>1 : M</td>
               <td>Replaces <code>CLAIM.Policy_ID</code> Foreign Key</td>
             </tr>
             <tr>
               <td><code>(:Policy)</code></td>
-              <td style="font-family: var(--font-mono); color: #c084fc;">[:PAID_THROUGH]</td>
+              <td><span class="rel-tag">[:PAID_THROUGH]</span></td>
               <td><code>(:Payment)</code></td>
               <td>1 : M</td>
               <td>Replaces <code>PAYMENT.Policy_ID</code> Foreign Key</td>
@@ -1814,12 +1847,12 @@ function openRecordDetail(type, id) {
       <div>
         <div class="detail-group-title">Personal Details</div>
         <div class="detail-grid">
-          <span class="detail-label">Customer ID</span><span class="detail-value">#${c.customer_id}</span>
+          <span class="detail-label">Customer ID</span><span class="detail-value text-mono">#${c.customer_id}</span>
           <span class="detail-label">Email Address</span><span class="detail-value">${c.email}</span>
           <span class="detail-label">Date of Birth</span><span class="detail-value">${c.dob || 'N/A'}</span>
-          <span class="detail-label">Driving License</span><span class="detail-value">${c.license_no}</span>
+          <span class="detail-label">Driving License</span><span class="detail-value text-mono">${c.license_no}</span>
           <span class="detail-label">Address</span><span class="detail-value">${c.address || 'N/A'}</span>
-          <span class="detail-label">Phone Numbers</span><span class="detail-value">${Array.isArray(c.phones) ? c.phones.join(', ') : (c.phones || 'N/A')}</span>
+          <span class="detail-label">Phone Numbers</span><span class="detail-value text-mono">${Array.isArray(c.phones) ? c.phones.join(', ') : (c.phones || 'N/A')}</span>
         </div>
       </div>
 
@@ -1827,7 +1860,7 @@ function openRecordDetail(type, id) {
         <div class="detail-group-title">Connected Vehicles Owned (${vehicles.length})</div>
         <div style="display: flex; flex-direction: column; gap: 0.5rem;">
           ${vehicles.map(v => `
-            <div style="background: #111; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.75rem;">
+            <div style="background: var(--bg-surface-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.75rem;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-weight: 600; font-family: var(--font-mono);">${v.reg_no}</span>
                 <span class="badge badge-neutral">${v.fuel_type}</span>
@@ -1864,22 +1897,22 @@ function openRecordDetail(type, id) {
       <div>
         <div class="detail-group-title">Vehicle Specifications</div>
         <div class="detail-grid">
-          <span class="detail-label">Vehicle ID</span><span class="detail-value">#${v.vehicle_id}</span>
-          <span class="detail-label">Registration</span><span class="detail-value">${v.reg_no}</span>
+          <span class="detail-label">Vehicle ID</span><span class="detail-value text-mono">#${v.vehicle_id}</span>
+          <span class="detail-label">Registration</span><span class="detail-value text-mono">${v.reg_no}</span>
           <span class="detail-label">Manufacturer</span><span class="detail-value">${v.brand}</span>
           <span class="detail-label">Model</span><span class="detail-value">${v.vehicle_model}</span>
-          <span class="detail-label">Fuel Type</span><span class="detail-value">${v.fuel_type}</span>
-          <span class="detail-label">Mfg Year</span><span class="detail-value">${v.mfg_year}</span>
-          <span class="detail-label">Engine Number</span><span class="detail-value">${v.engine_no}</span>
-          <span class="detail-label">Chassis Number</span><span class="detail-value">${v.chassis_no}</span>
+          <span class="detail-label">Fuel Type</span><span class="detail-value"><span class="badge badge-neutral">${v.fuel_type}</span></span>
+          <span class="detail-label">Mfg Year</span><span class="detail-value text-mono">${v.mfg_year}</span>
+          <span class="detail-label">Engine Number</span><span class="detail-value text-mono">${v.engine_no}</span>
+          <span class="detail-label">Chassis Number</span><span class="detail-value text-mono">${v.chassis_no}</span>
         </div>
       </div>
 
       <div>
         <div class="detail-group-title">Registered Owner</div>
-        <div style="background: #111; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.75rem;">
+        <div style="background: var(--bg-surface-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.75rem;">
           <div style="font-weight: 500;">${v.owner_name}</div>
-          <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.2rem;">Customer ID: #${v.customer_id}</div>
+          <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.2rem;" class="text-mono">Customer ID: #${v.customer_id}</div>
         </div>
       </div>
     `;
@@ -1895,11 +1928,11 @@ function openRecordDetail(type, id) {
       <div>
         <div class="detail-group-title">Claim Overview</div>
         <div class="detail-grid">
-          <span class="detail-label">Claim ID</span><span class="detail-value">#${cl.claim_id}</span>
-          <span class="detail-label">Claim Amount</span><span class="detail-value">₹${Number(cl.claim_amount).toLocaleString()}</span>
-          <span class="detail-label">Date Filed</span><span class="detail-value">${cl.claim_date}</span>
-          <span class="detail-label">Status</span><span class="detail-value"><span class="badge badge-${cl.claim_status.toLowerCase()}">${cl.claim_status}</span></span>
-          <span class="detail-label">Linked Policy</span><span class="detail-value">Policy #${cl.policy_id}</span>
+          <span class="detail-label">Claim ID</span><span class="detail-value text-mono">#${cl.claim_id}</span>
+          <span class="detail-label">Claim Amount</span><span class="detail-value text-mono">${formatCurrency(cl.claim_amount)}</span>
+          <span class="detail-label">Date Filed</span><span class="detail-value text-mono">${cl.claim_date}</span>
+          <span class="detail-label">Status</span><span class="detail-value">${renderStatusBadge(cl.claim_status)}</span>
+          <span class="detail-label">Linked Policy</span><span class="detail-value text-mono">Policy #${cl.policy_id}</span>
           <span class="detail-label">Claimant</span><span class="detail-value">${cl.customer_name}</span>
         </div>
       </div>
@@ -1943,15 +1976,36 @@ function openRecordDetail(type, id) {
       <div>
         <div class="detail-group-title">Coverage Terms</div>
         <div class="detail-grid">
-          <span class="detail-label">Policy ID</span><span class="detail-value">#${p.policy_id}</span>
+          <span class="detail-label">Policy ID</span><span class="detail-value text-mono">#${p.policy_id}</span>
           <span class="detail-label">Coverage Type</span><span class="detail-value">${p.policy_type}</span>
-          <span class="detail-label">Vehicle</span><span class="detail-value">${p.vehicle_reg}</span>
-          <span class="detail-label">Annual Premium</span><span class="detail-value">₹${Number(p.premium_amount).toLocaleString()}</span>
-          <span class="detail-label">Sum Insured</span><span class="detail-value">₹${Number(p.sum_insured).toLocaleString()}</span>
-          <span class="detail-label">Status</span><span class="detail-value"><span class="badge badge-${p.policy_status.toLowerCase()}">${p.policy_status}</span></span>
-          <span class="detail-label">Coverage Dates</span><span class="detail-value">${p.start_date} to ${p.end_date}</span>
-          <span class="detail-label">Total Paid</span><span class="detail-value">₹${p.total_paid.toLocaleString()}</span>
-          <span class="detail-label">Outstanding</span><span class="detail-value" style="color: ${p.balance > 0 ? '#fbbf24' : '#4ade80'};">₹${p.balance.toLocaleString()}</span>
+          <span class="detail-label">Vehicle</span><span class="detail-value text-mono">${p.vehicle_reg}</span>
+          <span class="detail-label">Annual Premium</span><span class="detail-value text-mono">${formatCurrency(p.premium_amount)}</span>
+          <span class="detail-label">Sum Insured</span><span class="detail-value text-mono">${formatCurrency(p.sum_insured)}</span>
+          <span class="detail-label">Status</span><span class="detail-value">${renderStatusBadge(p.policy_status)}</span>
+          <span class="detail-label">Coverage Dates</span><span class="detail-value text-mono" style="font-size: 12px;">${p.start_date} to ${p.end_date}</span>
+          <span class="detail-label">Total Paid</span><span class="detail-value text-mono">${formatCurrency(p.total_paid)}</span>
+          <span class="detail-label">Outstanding</span><span class="detail-value">${renderBalanceCell(p.balance)}</span>
+        </div>
+      </div>
+    `;
+  } else if (type === 'Payment') {
+    const pay = state.data.payments.find(item => matchEntityId(item.payment_id, id));
+    if (!pay) {
+      console.warn('Payment not found for id:', id);
+      return;
+    }
+    title.innerText = `Payment #${pay.payment_id}`;
+
+    body.innerHTML = `
+      <div>
+        <div class="detail-group-title">Transaction Receipt</div>
+        <div class="detail-grid">
+          <span class="detail-label">Payment ID</span><span class="detail-value text-mono">#${pay.payment_id}</span>
+          <span class="detail-label">Policy ID</span><span class="detail-value text-mono">Policy #${pay.policy_id}</span>
+          <span class="detail-label">Amount Paid</span><span class="detail-value text-mono" style="font-weight: 500;">${formatCurrency(pay.amount)}</span>
+          <span class="detail-label">Payment Method</span><span class="detail-value"><span class="badge badge-neutral">${pay.payment_method}</span></span>
+          <span class="detail-label">Payment Date</span><span class="detail-value text-mono">${pay.payment_date}</span>
+          <span class="detail-label">Receipt File</span><span class="detail-value text-mono" style="font-size: 12px; color: var(--text-tertiary);">${pay.receipt_file || 'None'}</span>
         </div>
       </div>
     `;
@@ -2225,7 +2279,7 @@ function handleGlobalSearch(term) {
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             Policy #${p.policy_id} (${p.policy_type})
           </span>
-          <span class="badge badge-${p.policy_status.toLowerCase()}" style="pointer-events: none;">${p.policy_status}</span>
+          <span style="pointer-events: none;">${renderStatusBadge(p.policy_status)}</span>
         </div>
       `;
     });
@@ -2238,9 +2292,9 @@ function handleGlobalSearch(term) {
         <div class="cmd-item" data-type="Claim" data-id="${cl.claim_id}">
           <span style="pointer-events: none; display: flex; align-items: center; gap: 8px;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            Claim #${cl.claim_id} (₹${Number(cl.claim_amount).toLocaleString()})
+            Claim #${cl.claim_id} (${formatCurrency(cl.claim_amount)})
           </span>
-          <span class="badge badge-${cl.claim_status.toLowerCase()}" style="pointer-events: none;">${cl.claim_status}</span>
+          <span style="pointer-events: none;">${renderStatusBadge(cl.claim_status)}</span>
         </div>
       `;
     });
