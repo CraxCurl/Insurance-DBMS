@@ -80,10 +80,11 @@ function renderBalanceCell(balance) {
 }
 
 function renderStatusBadge(status, customLabel) {
-  const s = String(status || 'UNKNOWN').trim().toUpperCase();
+  const s = String(status || "UNKNOWN").trim().toUpperCase();
   const cls = s.toLowerCase();
   const label = customLabel || s;
-  return `<span class="badge badge-${cls}"><span class="badge-dot"></span>${label}</span>`;
+  // Return a simple colored dot with a tooltip showing the status label
+  return `<span class="status-dot status-${cls}" title="${label}"></span>`;
 }
 
 // 1. Initialize and Fetch Live Data from Neo4j
