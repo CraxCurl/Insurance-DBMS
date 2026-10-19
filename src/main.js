@@ -80,11 +80,27 @@ function renderBalanceCell(balance) {
 }
 
 function renderStatusBadge(status, customLabel) {
-  const s = String(status || "UNKNOWN").trim().toUpperCase();
-  const cls = s.toLowerCase();
+  const s = String(status || 'UNKNOWN').trim().toUpperCase();
   const label = customLabel || s;
-  // Return a simple colored dot with a tooltip showing the status label
-  return `<span class="status-dot status-${cls}" title="${label}"></span>`;
+  // Map every known status to a semantic color class
+  let colorClass;
+  switch (s) {
+    case 'ACTIVE':
+    case 'SETTLED':
+      colorClass = 'sd-green'; break;
+    case 'APPROVED':
+      colorClass = 'sd-green'; break;
+    case 'PENDING':
+      colorClass = 'sd-yellow'; break;
+    case 'REJECTED':
+    case 'EXPIRED':
+      colorClass = 'sd-red'; break;
+    case 'CANCELLED':
+      colorClass = 'sd-grey'; break;
+    default:
+      colorClass = 'sd-grey';
+  }
+  return `<span class="status-dot ${colorClass}" title="${label}"></span>`;
 }
 
 // 1. Initialize and Fetch Live Data from Neo4j
@@ -111,14 +127,14 @@ async function checkDatabaseConnection() {
 }
 
 function updateConnectionBadge() {
-  const badge = document.getElementById('headerConnPill');
-  if (!badge) return;
+  const pill = document.getElementById('headerConnPill');
+  if (!pill) return;
   if (state.connection.connected) {
-    badge.className = 'conn-pill connected';
-    badge.innerHTML = `<span class="conn-dot"></span><span>Neo4j Live</span>`;
+    pill.className = 'conn-dot-btn connected';
+    pill.title = 'Connected — Neo4j Live';
   } else {
-    badge.className = 'conn-pill disconnected';
-    badge.innerHTML = `<span class="conn-dot"></span><span>Disconnected</span>`;
+    pill.className = 'conn-dot-btn disconnected';
+    pill.title = 'Disconnected from Neo4j';
   }
 }
 
@@ -319,11 +335,8 @@ function renderShell() {
               <kbd class="search-kbd">⌘K</kbd>
             </button>
 
-            <!-- Neo4j Status Badge -->
-            <button class="conn-pill" id="headerConnPill" title="Click to view database connection details">
-              <span class="conn-dot"></span>
-              <span>Checking...</span>
-            </button>
+            <!-- Neo4j Status Dot -->
+            <button class="conn-dot-btn" id="headerConnPill" title="Checking connection..."></button>
 
             <!-- Refresh Button -->
             <button class="btn btn-ghost" id="btnGlobalRefresh" title="Refresh all database data">
@@ -625,7 +638,7 @@ function renderOverviewPage(container) {
                 <td style="font-weight: 500;">${c.name}</td>
                 <td style="color: var(--text-secondary);">${c.email}</td>
                 <td class="text-mono">${c.license_no}</td>
-                <td><span class="badge badge-neutral">${c.vehicle_count} vehicles</span></td>
+                <td><span class="text-muted text-mono" style="font-size:11px">${c.vehicle_count} vehicle${c.vehicle_count !== 1 ? 's' : ''}</span></td>
                 <td class="center-col"><button class="btn btn-ghost" style="font-size: 11px;">View</button></td>
               </tr>
             `).join('')}
@@ -696,7 +709,7 @@ function renderCustomersPage(container) {
         <td style="color: var(--text-secondary);">${c.email}</td>
         <td style="font-family: var(--font-mono);">${c.license_no}</td>
         <td style="color: var(--text-secondary);">${Array.isArray(c.phones) ? c.phones.join(', ') : (c.phones || 'N/A')}</td>
-        <td><span class="badge badge-neutral">${c.vehicle_count} vehicles</span></td>
+        <td><span class="text-muted text-mono" style="font-size:11px">${c.vehicle_count} vehicle${c.vehicle_count !== 1 ? 's' : ''}</span></td>
       </tr>
     `).join('');
 
@@ -779,14 +792,14 @@ function renderVehiclesPage(container) {
       <tr data-type="Vehicle" data-id="${v.vehicle_id}">
         <td style="font-family: var(--font-mono); font-weight: 500;">${v.reg_no}</td>
         <td>${v.brand} ${v.vehicle_model}</td>
-        <td><span class="badge badge-neutral">${v.fuel_type}</span></td>
+        <td><span class="text-muted" style="font-size:12px">${v.fuel_type}</span></td>
         <td style="font-family: var(--font-mono);">${v.mfg_year}</td>
         <td>${v.owner_name}</td>
         <td style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">
           ${v.policy_id ? `Policy #${v.policy_id}` : '<span class="text-muted">—</span>'}
         </td>
         <td>
-          ${v.policy_id ? renderStatusBadge(v.policy_status) : `<span class="badge badge-neutral"><span class="badge-dot"></span>UNINSURED</span>`}
+          ${v.policy_id ? renderStatusBadge(v.policy_status) : `<span class="status-dot sd-grey" title="UNINSURED"></span>`}
         </td>
         <td style="font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);">${v.chassis_no}</td>
       </tr>
@@ -960,7 +973,7 @@ function renderClaimsPage(container) {
         <td class="num-col">${formatCurrency(c.claim_amount)}</td>
         <td style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">${c.claim_date}</td>
         <td>${renderStatusBadge(c.claim_status)}</td>
-        <td><span class="badge badge-neutral">${c.doc_count} docs</span></td>
+        <td><span class="text-muted text-mono" style="font-size:11px">${c.doc_count} doc${c.doc_count !== 1 ? 's' : ''}</span></td>
         <td style="text-align: right;">
           <button class="btn btn-ghost" style="font-size: 11px; padding: 0.25rem 0.5rem;">Inspect →</button>
         </td>
@@ -1054,7 +1067,7 @@ function renderPaymentsPage(container) {
                 <td style="font-family: var(--font-mono); font-weight: 500;">#${p.payment_id}</td>
                 <td style="font-family: var(--font-mono); color: var(--text-secondary);">Policy #${p.policy_id}</td>
                 <td class="num-col">${formatCurrency(p.amount)}</td>
-                <td><span class="badge badge-neutral">${p.payment_method}</span></td>
+                <td><span class="text-muted" style="font-size:12px">${p.payment_method}</span></td>
                 <td style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">${p.payment_date}</td>
                 <td style="font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);">${p.receipt_file || 'None'}</td>
               </tr>
@@ -1827,7 +1840,7 @@ function openRecordDetail(type, id) {
             <div style="background: var(--bg-surface-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.75rem;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-weight: 600; font-family: var(--font-mono);">${v.reg_no}</span>
-                <span class="badge badge-neutral">${v.fuel_type}</span>
+                <span class="text-muted" style="font-size:12px">${v.fuel_type}</span>
               </div>
               <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.25rem;">
                 ${v.brand} ${v.vehicle_model} (${v.mfg_year}) • Status: ${v.policy_status}
@@ -1865,7 +1878,7 @@ function openRecordDetail(type, id) {
           <span class="detail-label">Registration</span><span class="detail-value text-mono">${v.reg_no}</span>
           <span class="detail-label">Manufacturer</span><span class="detail-value">${v.brand}</span>
           <span class="detail-label">Model</span><span class="detail-value">${v.vehicle_model}</span>
-          <span class="detail-label">Fuel Type</span><span class="detail-value"><span class="badge badge-neutral">${v.fuel_type}</span></span>
+          <span class="detail-label">Fuel Type</span><span class="detail-value">${v.fuel_type}</span>
           <span class="detail-label">Mfg Year</span><span class="detail-value text-mono">${v.mfg_year}</span>
           <span class="detail-label">Engine Number</span><span class="detail-value text-mono">${v.engine_no}</span>
           <span class="detail-label">Chassis Number</span><span class="detail-value text-mono">${v.chassis_no}</span>
@@ -1967,7 +1980,7 @@ function openRecordDetail(type, id) {
           <span class="detail-label">Payment ID</span><span class="detail-value text-mono">#${pay.payment_id}</span>
           <span class="detail-label">Policy ID</span><span class="detail-value text-mono">Policy #${pay.policy_id}</span>
           <span class="detail-label">Amount Paid</span><span class="detail-value text-mono" style="font-weight: 500;">${formatCurrency(pay.amount)}</span>
-          <span class="detail-label">Payment Method</span><span class="detail-value"><span class="badge badge-neutral">${pay.payment_method}</span></span>
+          <span class="detail-label">Payment Method</span><span class="detail-value">${pay.payment_method}</span>
           <span class="detail-label">Payment Date</span><span class="detail-value text-mono">${pay.payment_date}</span>
           <span class="detail-label">Receipt File</span><span class="detail-value text-mono" style="font-size: 12px; color: var(--text-tertiary);">${pay.receipt_file || 'None'}</span>
         </div>
