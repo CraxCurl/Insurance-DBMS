@@ -1073,6 +1073,8 @@ function renderPaymentsPage(container) {
 // VIEW 7: FOCUSED GRAPH EXPLORER
 // ==========================================
 function renderGraphExplorerPage(container) {
+  const isEmpty = state.graph.nodes.length === 0;
+
   container.innerHTML = `
     <div class="page-header-row">
       <div>
@@ -1080,7 +1082,6 @@ function renderGraphExplorerPage(container) {
         <p class="page-desc">Focused exploration of property graph connections. Search any entity to begin.</p>
       </div>
       <div style="display: flex; gap: 0.5rem;">
-        <button class="btn btn-secondary" id="btnGraphLoadSeed">Load Sample Cluster</button>
         <button class="btn btn-secondary" id="btnGraphReset">Clear Graph</button>
       </div>
     </div>
@@ -1100,6 +1101,29 @@ function renderGraphExplorerPage(container) {
         <div class="graph-search-bar">
           <input type="text" id="graphSearchInput" class="input-text" placeholder="Lookup customer, vehicle reg, policy..." style="width: 260px; font-size: 12px;" />
           <button class="btn btn-primary" id="btnGraphSearch" style="padding: 0.35rem 0.65rem; font-size: 12px;">Search</button>
+        </div>
+
+        <!-- Clean Initial State Overlay -->
+        <div class="graph-empty-state" id="graphEmptyState" style="${isEmpty ? 'display: flex;' : 'display: none;'}">
+          <div class="graph-empty-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <path d="M11 8v6M8 11h6"/>
+            </svg>
+          </div>
+          <div style="font-size: 15px; font-weight: 600; color: var(--text-primary); margin-top: 0.75rem;">
+            Search to Explore Graph Connections
+          </div>
+          <p style="font-size: 13px; color: var(--text-tertiary); max-width: 380px; margin: 0.5rem 0 1.25rem 0; line-height: 1.5;">
+            To keep exploration focused, nodes load on demand. Search for any customer, vehicle, or policy above, or click a quick starter:
+          </p>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; max-width: 440px;">
+            <button class="btn btn-secondary graph-quick-pill" data-query="Arjun Mehta">👤 Arjun Mehta</button>
+            <button class="btn btn-secondary graph-quick-pill" data-query="Vinayak Tripathi">👤 Vinayak Tripathi</button>
+            <button class="btn btn-secondary graph-quick-pill" data-query="TN01AB1234">🚘 TN01AB1234</button>
+            <button class="btn btn-secondary graph-quick-pill" data-query="5001">🛡️ Policy #5001</button>
+            <button class="btn btn-secondary graph-quick-pill" data-query="9001">📑 Claim #9001</button>
+          </div>
         </div>
 
         <canvas id="graphCanvas"></canvas>
@@ -1127,15 +1151,12 @@ function renderGraphExplorerPage(container) {
 
   initGraphCanvas();
 
-  document.getElementById('btnGraphLoadSeed')?.addEventListener('click', async () => {
-    const data = await fetchFocusedGraph();
-    loadGraphData(data);
-  });
-
   document.getElementById('btnGraphReset')?.addEventListener('click', () => {
     state.graph.nodes = [];
     state.graph.links = [];
     state.graph.selectedNode = null;
+    const emptyState = document.getElementById('graphEmptyState');
+    if (emptyState) emptyState.style.display = 'flex';
     document.getElementById('inspectorDetails').innerHTML = 'Graph cleared. Search for an entity to begin.';
   });
 
@@ -1144,34 +1165,77 @@ function renderGraphExplorerPage(container) {
     if (e.key === 'Enter') performGraphSearch();
   });
 
-  // Load initial focused cluster if empty
-  if (state.graph.nodes.length === 0) {
-    fetchFocusedGraph().then(loadGraphData);
-  }
+  document.querySelectorAll('.graph-quick-pill').forEach(btn => {
+    btn.onclick = () => {
+      const q = btn.dataset.query;
+      const inp = document.getElementById('graphSearchInput');
+      if (inp) inp.value = q;
+      performGraphSearch(q);
+    };
+  });
 }
 
-async function performGraphSearch() {
-  const query = document.getElementById('graphSearchInput')?.value.trim();
+async function performGraphSearch(explicitQuery) {
+  const query = (explicitQuery || document.getElementById('graphSearchInput')?.value || '').trim();
   if (!query) return;
 
-  // Search in live records
-  const cust = state.data.customers.find(c => c.name.toLowerCase().includes(query.toLowerCase()));
+  const qLower = query.toLowerCase();
+  const qNum = parseInt(query.replace(/[^0-9]/g, '')) || null;
+
+  // 1. Search Customer
+  const cust = state.data.customers.find(c => 
+    c.name.toLowerCase().includes(qLower) || 
+    c.license_no.toLowerCase().includes(qLower) ||
+    (qNum !== null && matchEntityId(c.customer_id, qNum))
+  );
   if (cust) {
     const data = await fetchFocusedGraph('Customer', 'customer_id', cust.customer_id);
     loadGraphData(data);
     return;
   }
 
-  const veh = state.data.vehicles.find(v => v.reg_no.toLowerCase().includes(query.toLowerCase()));
+  // 2. Search Vehicle
+  const veh = state.data.vehicles.find(v => 
+    v.reg_no.toLowerCase().includes(qLower) || 
+    v.brand.toLowerCase().includes(qLower) ||
+    v.vehicle_model.toLowerCase().includes(qLower) ||
+    (qNum !== null && matchEntityId(v.vehicle_id, qNum))
+  );
   if (veh) {
     const data = await fetchFocusedGraph('Vehicle', 'vehicle_id', veh.vehicle_id);
     loadGraphData(data);
     return;
   }
 
-  const pol = state.data.policies.find(p => String(p.policy_id) === query);
+  // 3. Search Policy
+  const pol = state.data.policies.find(p => 
+    matchEntityId(p.policy_id, query) || 
+    (qNum !== null && matchEntityId(p.policy_id, qNum))
+  );
   if (pol) {
     const data = await fetchFocusedGraph('Policy', 'policy_id', pol.policy_id);
+    loadGraphData(data);
+    return;
+  }
+
+  // 4. Search Claim
+  const cl = state.data.claims.find(c => 
+    matchEntityId(c.claim_id, query) || 
+    (qNum !== null && matchEntityId(c.claim_id, qNum))
+  );
+  if (cl) {
+    const data = await fetchFocusedGraph('Claim', 'claim_id', cl.claim_id);
+    loadGraphData(data);
+    return;
+  }
+
+  // 5. Search Payment
+  const pay = state.data.payments.find(p => 
+    matchEntityId(p.payment_id, query) || 
+    (qNum !== null && matchEntityId(p.payment_id, qNum))
+  );
+  if (pay) {
+    const data = await fetchFocusedGraph('Payment', 'payment_id', pay.payment_id);
     loadGraphData(data);
     return;
   }
@@ -1180,6 +1244,9 @@ async function performGraphSearch() {
 }
 
 function loadGraphData({ nodes, links }) {
+  const emptyState = document.getElementById('graphEmptyState');
+  if (emptyState) emptyState.style.display = 'none';
+
   // Merge smoothly without duplicate keys
   const existingIds = new Set(state.graph.nodes.map(n => n.id));
   nodes.forEach(n => {

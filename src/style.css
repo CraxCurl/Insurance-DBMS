@@ -766,6 +766,37 @@ body {
   overflow: hidden;
 }
 
+.graph-empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  background: rgba(10, 10, 10, 0.88);
+  backdrop-filter: blur(6px);
+  z-index: 5;
+}
+
+.graph-empty-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #141414;
+  border: 1px solid var(--border-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.graph-quick-pill {
+  font-size: 12px !important;
+  padding: 0.35rem 0.65rem !important;
+}
+
 canvas#graphCanvas {
   width: 100%;
   height: 100%;
