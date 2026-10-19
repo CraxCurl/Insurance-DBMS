@@ -570,7 +570,7 @@ function renderOverviewPage(container) {
     </section>
 
     <!-- Two-Column Overview Layout -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+    <div class="overview-grid">
       <!-- Pending Claims -->
       <div class="card-section">
         <div class="card-section-header">
@@ -756,7 +756,7 @@ function renderCustomersPage(container) {
 
     <div class="card-section">
       <div class="filter-bar">
-        <input type="text" id="custSearchInput" class="input-text" placeholder="Search by name, email, or license..." style="width: 320px;" />
+        <input type="text" id="custSearchInput" class="input-text table-search-input" placeholder="Search by name, email, or license..." />
         <span style="font-size: 12px; color: var(--text-tertiary); margin-left: auto;">
           ${state.data.customers.length} total records
         </span>
@@ -811,7 +811,7 @@ function renderVehiclesPage(container) {
     if (!tbody) return;
 
     if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-tertiary);">No vehicles found.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-tertiary);">No vehicles found.</td></tr>`;
       return;
     }
 
@@ -822,8 +822,11 @@ function renderVehiclesPage(container) {
         <td><span class="badge badge-neutral">${v.fuel_type}</span></td>
         <td style="font-family: var(--font-mono);">${v.mfg_year}</td>
         <td>${v.owner_name}</td>
+        <td style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">
+          ${v.policy_id ? `Policy #${v.policy_id}` : '<span class="text-muted">—</span>'}
+        </td>
         <td>
-          ${v.policy_id ? renderStatusBadge(v.policy_status, `Policy #${v.policy_id}`) : `<span class="badge badge-neutral"><span class="badge-dot"></span>Uninsured</span>`}
+          ${v.policy_id ? renderStatusBadge(v.policy_status) : `<span class="badge badge-neutral"><span class="badge-dot"></span>UNINSURED</span>`}
         </td>
         <td style="font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);">${v.chassis_no}</td>
       </tr>
@@ -844,7 +847,7 @@ function renderVehiclesPage(container) {
 
     <div class="card-section">
       <div class="filter-bar">
-        <input type="text" id="vehSearchInput" class="input-text" placeholder="Search registration, brand, owner..." style="width: 320px;" />
+        <input type="text" id="vehSearchInput" class="input-text table-search-input" placeholder="Search registration, brand, owner..." />
         <select id="vehFuelSelect" class="select-dropdown">
           <option value="ALL">All Fuel Types</option>
           <option value="PETROL">Petrol</option>
@@ -865,6 +868,7 @@ function renderVehiclesPage(container) {
               <th>Fuel</th>
               <th>Year</th>
               <th>Registered Owner</th>
+              <th>Linked Policy</th>
               <th>Insurance Status</th>
               <th>Chassis No</th>
             </tr>
