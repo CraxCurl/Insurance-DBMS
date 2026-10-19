@@ -111,6 +111,12 @@ async function initApp() {
   await reloadAllData();
   handleHashNavigation();
   window.addEventListener('hashchange', handleHashNavigation);
+  // Dismiss loading splash with a fade
+  const splash = document.getElementById('appLoadingScreen');
+  if (splash) {
+    splash.classList.add('fade-out');
+    setTimeout(() => splash.remove(), 500);
+  }
 }
 
 function handleHashNavigation() {
@@ -462,6 +468,9 @@ function renderCurrentRoute() {
   const container = document.getElementById('mainContainer');
   if (!container) return;
 
+  // Remove animation class so it can be re-triggered
+  container.classList.remove('page-enter');
+
   switch (state.currentRoute) {
     case 'overview':
       renderOverviewPage(container);
@@ -493,6 +502,10 @@ function renderCurrentRoute() {
     default:
       renderOverviewPage(container);
   }
+
+  // Force a reflow then add animation class for smooth entry
+  void container.offsetWidth;
+  container.classList.add('page-enter');
 }
 
 // ==========================================
