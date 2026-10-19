@@ -330,9 +330,7 @@ function renderShell() {
             </button>
 
             <!-- Settings Button -->
-            <button class="btn btn-ghost" id="btnOpenSettings" title="Connection Settings">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            </button>
+
           </div>
         </header>
 
@@ -372,46 +370,7 @@ function renderShell() {
       </div>
     </div>
 
-    <!-- Settings / Database Connection Modal -->
-    <div class="modal-overlay" id="settingsModal">
-      <div class="modal-dialog">
-        <div class="modal-header">
-          <div style="font-size: 15px; font-weight: 600;">Neo4j Database Settings</div>
-          <button class="btn btn-ghost" id="btnCloseSettings" style="padding: 0.35rem;" aria-label="Close">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        </div>
-        <form id="formSaveSettings">
-          <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem;">
-            <p style="font-size: 13px; color: var(--text-secondary);">
-              The dashboard securely connects to your Neo4j AuraDB instance. Serverless API routes on Vercel automatically utilize backend environment variables.
-            </p>
-            <div>
-              <label style="font-size: 12px; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Connection URI</label>
-              <input type="text" id="cfgUri" class="input-text" style="width: 100%; font-family: var(--font-mono); font-size: 12px;" />
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-              <div>
-                <label style="font-size: 12px; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Username</label>
-                <input type="text" id="cfgUser" class="input-text" style="width: 100%;" />
-              </div>
-              <div>
-                <label style="font-size: 12px; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Database</label>
-                <input type="text" id="cfgDatabase" class="input-text" style="width: 100%;" />
-              </div>
-            </div>
-            <div>
-              <label style="font-size: 12px; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Password</label>
-              <input type="password" id="cfgPassword" class="input-text" style="width: 100%;" />
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" id="btnCancelSettings">Close</button>
-            <button type="submit" class="btn btn-primary">Save & Connect</button>
-          </div>
-        </form>
-      </div>
-    </div>
+
 
     <!-- Create Customer Modal -->
     <div class="modal-overlay" id="addCustomerModal">
@@ -2104,32 +2063,7 @@ function setupShellEventListeners() {
     showToast('All records updated from Neo4j.');
   });
 
-  // Settings Modal
-  const openSettings = () => {
-    const cfg = getNeo4jConfig();
-    document.getElementById('cfgUri').value = cfg.uri;
-    document.getElementById('cfgUser').value = cfg.user;
-    document.getElementById('cfgDatabase').value = cfg.database;
-    document.getElementById('cfgPassword').value = cfg.password;
-    openModal('settingsModal');
-  };
-  document.getElementById('btnOpenSettings')?.addEventListener('click', openSettings);
-  document.getElementById('headerConnPill')?.addEventListener('click', openSettings);
-  document.getElementById('btnCloseSettings')?.addEventListener('click', () => closeModal('settingsModal'));
-  document.getElementById('btnCancelSettings')?.addEventListener('click', () => closeModal('settingsModal'));
 
-  document.getElementById('formSaveSettings')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const uri = document.getElementById('cfgUri').value.trim();
-    const user = document.getElementById('cfgUser').value.trim();
-    const database = document.getElementById('cfgDatabase').value.trim();
-    const password = document.getElementById('cfgPassword').value.trim();
-    saveNeo4jConfig({ uri, user, database, password });
-    closeModal('settingsModal');
-    showToast('Testing updated connection...');
-    await checkDatabaseConnection();
-    await reloadAllData();
-  });
 
   // Add Customer Modal
   document.getElementById('btnCloseAddCustomer')?.addEventListener('click', () => closeModal('addCustomerModal'));
