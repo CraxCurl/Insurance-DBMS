@@ -37,9 +37,9 @@ async function seed() {
     }
     console.log('Constraints created.');
 
-    console.log('3. Inserting Customers, Vehicles, and Policies...');
+    console.log('3. Inserting Customers, Vehicles, and Policies (15 Customers, 16 Vehicles, 15 Policies)...');
     await session.run(`
-      // Customers
+      // Customers (Batch 1 + Team Members + Batch 2)
       CREATE (c1:Customer {customer_id: 1, name: 'Arjun Mehta', address: '12 Gandhi Road, Chennai', email: 'arjun.mehta@mail.com', dob: date('1990-03-14'), license_no: 'TN0120100012345', phones: ['9876500001', '9876510001']}),
              (c2:Customer {customer_id: 2, name: 'Sneha Reddy', address: '45 MG Road, Bengaluru', email: 'sneha.reddy@mail.com', dob: date('1988-07-22'), license_no: 'KA0320090054321', phones: ['9876500002']}),
              (c3:Customer {customer_id: 3, name: 'Karthik Iyer', address: '7 Anna Nagar, Chennai', email: 'karthik.iyer@mail.com', dob: date('1992-11-05'), license_no: 'TN0920110067890', phones: ['9876500003', '9876510003']}),
@@ -47,7 +47,14 @@ async function seed() {
              (c5:Customer {customer_id: 5, name: 'Rahul Verma', address: '21 Civil Lines, Jaipur', email: 'rahul.verma@mail.com', dob: date('1985-09-18'), license_no: 'RJ1420080033445', phones: ['9876500005']}),
              (c6:Customer {customer_id: 6, name: 'Vinayak Tripathi', address: '14 Lake View Colony, Chennai', email: 'vinayak.25brs1259@mail.com', dob: date('2006-05-10'), license_no: 'TN2220240012259', phones: ['9876500006', '9876510006']}),
              (c7:Customer {customer_id: 7, name: 'Dhruv Upadhyaya', address: '32 Rose Garden Road, Chennai', email: 'dhruv.25brs1232@mail.com', dob: date('2006-08-21'), license_no: 'TN2220240012232', phones: ['9876500007']}),
-             (c8:Customer {customer_id: 8, name: 'Arnav Singla', address: '9 Green Park Avenue, Chennai', email: 'arnav.25brs1269@mail.com', dob: date('2006-12-03'), license_no: 'TN2220240012260', phones: ['9876500008']})
+             (c8:Customer {customer_id: 8, name: 'Arnav Singla', address: '9 Green Park Avenue, Chennai', email: 'arnav.25brs1269@mail.com', dob: date('2006-12-03'), license_no: 'TN2220240012260', phones: ['9876500008']}),
+             (c9:Customer {customer_id: 9, name: 'Pooja Hegde', address: '15 Jubilee Hills, Hyderabad', email: 'pooja.hegde@mail.com', dob: date('1993-04-12'), license_no: 'TS0920140088990', phones: ['9876500009']}),
+             (c10:Customer {customer_id: 10, name: 'Aman Saxena', address: '29 Aliganj, Lucknow', email: 'aman.saxena@mail.com', dob: date('1989-10-25'), license_no: 'UP3220120033441', phones: ['9876500010']}),
+             (c11:Customer {customer_id: 11, name: 'Ramesh Nair', address: '22 Marine Drive, Mumbai', email: 'ramesh.nair@mail.com', dob: date('1987-04-16'), license_no: 'MH0120070088991', phones: ['9876500011', '9876510011']}),
+             (c12:Customer {customer_id: 12, name: 'Ananya Chatterjee', address: '18 Park Street, Kolkata', email: 'ananya.c@mail.com', dob: date('1994-09-28'), license_no: 'WB0220150044552', phones: ['9876500012']}),
+             (c13:Customer {customer_id: 13, name: 'Vikram Malhotra', address: '55 Banjara Hills, Hyderabad', email: 'vikram.m@mail.com', dob: date('1983-11-12'), license_no: 'TS0920050011223', phones: ['9876500013', '9876510013']}),
+             (c14:Customer {customer_id: 14, name: 'Meera Joshi', address: '10 Koregaon Park, Pune', email: 'meera.joshi@mail.com', dob: date('1996-02-04'), license_no: 'MH1220180077664', phones: ['9876500014']}),
+             (c15:Customer {customer_id: 15, name: 'Rohan Gupta', address: '77 MG Road, Kochi', email: 'rohan.gupta@mail.com', dob: date('1991-08-19'), license_no: 'KL0720130099885', phones: ['9876500015']})
 
       // Vehicles
       CREATE (v101:Vehicle {vehicle_id: 101, fuel_type: 'PETROL', reg_no: 'TN01AB1234', vehicle_model: 'Swift', brand: 'Maruti', mfg_year: 2021, engine_no: 'ENG1001', chassis_no: 'CHS1001'}),
@@ -59,7 +66,13 @@ async function seed() {
              (v107:Vehicle {vehicle_id: 107, fuel_type: 'PETROL', reg_no: 'TN22NP6789', vehicle_model: 'Baleno', brand: 'Maruti', mfg_year: 2024, engine_no: 'ENG1007', chassis_no: 'CHS1007'}),
              (v108:Vehicle {vehicle_id: 108, fuel_type: 'ELECTRIC', reg_no: 'TN22QR1122', vehicle_model: 'Tiago EV', brand: 'Tata', mfg_year: 2024, engine_no: 'ENG1008', chassis_no: 'CHS1008'}),
              (v109:Vehicle {vehicle_id: 109, fuel_type: 'PETROL', reg_no: 'TN22ST3344', vehicle_model: 'i20', brand: 'Hyundai', mfg_year: 2023, engine_no: 'ENG1009', chassis_no: 'CHS1009'}),
-             (v110:Vehicle {vehicle_id: 110, fuel_type: 'PETROL', reg_no: 'TN09UV5566', vehicle_model: 'Polo', brand: 'Volkswagen', mfg_year: 2017, engine_no: 'ENG1010', chassis_no: 'CHS1010'})
+             (v110:Vehicle {vehicle_id: 110, fuel_type: 'PETROL', reg_no: 'TN09UV5566', vehicle_model: 'Polo', brand: 'Volkswagen', mfg_year: 2017, engine_no: 'ENG1010', chassis_no: 'CHS1010'}),
+             (v111:Vehicle {vehicle_id: 111, fuel_type: 'PETROL', reg_no: 'MH01AZ4567', vehicle_model: 'Verna', brand: 'Hyundai', mfg_year: 2023, engine_no: 'ENG1011', chassis_no: 'CHS1011'}),
+             (v112:Vehicle {vehicle_id: 112, fuel_type: 'DIESEL', reg_no: 'WB02BX8901', vehicle_model: 'Thar', brand: 'Mahindra', mfg_year: 2022, engine_no: 'ENG1012', chassis_no: 'CHS1012'}),
+             (v113:Vehicle {vehicle_id: 113, fuel_type: 'ELECTRIC', reg_no: 'TS09CY2345', vehicle_model: 'ZS EV', brand: 'MG', mfg_year: 2024, engine_no: 'ENG1013', chassis_no: 'CHS1013'}),
+             (v114:Vehicle {vehicle_id: 114, fuel_type: 'PETROL', reg_no: 'MH12DZ6789', vehicle_model: 'Seltos', brand: 'Kia', mfg_year: 2023, engine_no: 'ENG1014', chassis_no: 'CHS1014'}),
+             (v115:Vehicle {vehicle_id: 115, fuel_type: 'HYBRID', reg_no: 'KL07EF1234', vehicle_model: 'Hyryder', brand: 'Toyota', mfg_year: 2024, engine_no: 'ENG1015', chassis_no: 'CHS1015'}),
+             (v116:Vehicle {vehicle_id: 116, fuel_type: 'PETROL', reg_no: 'MH01GH5678', vehicle_model: 'Elevate', brand: 'Honda', mfg_year: 2023, engine_no: 'ENG1016', chassis_no: 'CHS1016'})
 
       // Policies
       CREATE (p5001:Policy {policy_id: 5001, policy_type: 'COMPREHENSIVE', premium_amount: 18500, start_date: date('2026-01-01'), end_date: date('2026-12-31'), sum_insured: 550000, policy_status: 'ACTIVE'}),
@@ -70,7 +83,13 @@ async function seed() {
              (p5006:Policy {policy_id: 5006, policy_type: 'THIRD_PARTY', premium_amount: 6500, start_date: date('2025-08-01'), end_date: date('2026-07-31'), sum_insured: 250000, policy_status: 'EXPIRED'}),
              (p5007:Policy {policy_id: 5007, policy_type: 'COMPREHENSIVE', premium_amount: 21000, start_date: date('2026-07-01'), end_date: date('2027-06-30'), sum_insured: 720000, policy_status: 'ACTIVE'}),
              (p5008:Policy {policy_id: 5008, policy_type: 'COMPREHENSIVE', premium_amount: 28500, start_date: date('2026-08-05'), end_date: date('2027-08-04'), sum_insured: 1100000, policy_status: 'ACTIVE'}),
-             (p5009:Policy {policy_id: 5009, policy_type: 'OWN_DAMAGE', premium_amount: 15500, start_date: date('2026-04-12'), end_date: date('2027-04-11'), sum_insured: 650000, policy_status: 'CANCELLED'})
+             (p5009:Policy {policy_id: 5009, policy_type: 'OWN_DAMAGE', premium_amount: 15500, start_date: date('2026-04-12'), end_date: date('2027-04-11'), sum_insured: 650000, policy_status: 'CANCELLED'}),
+             (p5010:Policy {policy_id: 5010, policy_type: 'COMPREHENSIVE', premium_amount: 22500, start_date: date('2026-02-15'), end_date: date('2027-02-14'), sum_insured: 850000, policy_status: 'ACTIVE'}),
+             (p5011:Policy {policy_id: 5011, policy_type: 'COMPREHENSIVE', premium_amount: 29000, start_date: date('2026-03-10'), end_date: date('2027-03-09'), sum_insured: 1250000, policy_status: 'ACTIVE'}),
+             (p5012:Policy {policy_id: 5012, policy_type: 'COMPREHENSIVE', premium_amount: 34000, start_date: date('2026-04-01'), end_date: date('2027-03-31'), sum_insured: 1600000, policy_status: 'ACTIVE'}),
+             (p5013:Policy {policy_id: 5013, policy_type: 'OWN_DAMAGE', premium_amount: 14500, start_date: date('2026-05-18'), end_date: date('2027-05-17'), sum_insured: 700000, policy_status: 'ACTIVE'}),
+             (p5014:Policy {policy_id: 5014, policy_type: 'COMPREHENSIVE', premium_amount: 26000, start_date: date('2025-10-01'), end_date: date('2026-09-30'), sum_insured: 950000, policy_status: 'EXPIRED'}),
+             (p5015:Policy {policy_id: 5015, policy_type: 'THIRD_PARTY', premium_amount: 8200, start_date: date('2026-06-20'), end_date: date('2027-06-19'), sum_insured: 350000, policy_status: 'ACTIVE'})
 
       // OWNS
       CREATE (c1)-[:OWNS]->(v101),
@@ -82,7 +101,13 @@ async function seed() {
              (c6)-[:OWNS]->(v107),
              (c7)-[:OWNS]->(v108),
              (c8)-[:OWNS]->(v109),
-             (c3)-[:OWNS]->(v110)
+             (c3)-[:OWNS]->(v110),
+             (c11)-[:OWNS]->(v111),
+             (c11)-[:OWNS]->(v116),
+             (c12)-[:OWNS]->(v112),
+             (c13)-[:OWNS]->(v113),
+             (c14)-[:OWNS]->(v114),
+             (c15)-[:OWNS]->(v115)
 
       // INSURED_BY
       CREATE (v101)-[:INSURED_BY]->(p5001),
@@ -93,17 +118,27 @@ async function seed() {
              (v106)-[:INSURED_BY]->(p5006),
              (v107)-[:INSURED_BY]->(p5007),
              (v108)-[:INSURED_BY]->(p5008),
-             (v109)-[:INSURED_BY]->(p5009);
+             (v109)-[:INSURED_BY]->(p5009),
+             (v111)-[:INSURED_BY]->(p5010),
+             (v112)-[:INSURED_BY]->(p5011),
+             (v113)-[:INSURED_BY]->(p5012),
+             (v114)-[:INSURED_BY]->(p5013),
+             (v115)-[:INSURED_BY]->(p5014),
+             (v116)-[:INSURED_BY]->(p5015);
     `);
     console.log('Customers, Vehicles, Policies created.');
 
-    console.log('4. Inserting Claims, Payments, and Weak Entities...');
+    console.log('4. Inserting Claims, Payments, and Weak Entities (15 Claims, 18 Payments)...');
     await session.run(`
       MATCH (v101:Vehicle {vehicle_id: 101}), (v102:Vehicle {vehicle_id: 102}), (v103:Vehicle {vehicle_id: 103}),
             (v105:Vehicle {vehicle_id: 105}), (v107:Vehicle {vehicle_id: 107}), (v108:Vehicle {vehicle_id: 108}),
+            (v111:Vehicle {vehicle_id: 111}), (v112:Vehicle {vehicle_id: 112}), (v113:Vehicle {vehicle_id: 113}),
+            (v114:Vehicle {vehicle_id: 114}), (v115:Vehicle {vehicle_id: 115}), (v116:Vehicle {vehicle_id: 116}),
             (p5001:Policy {policy_id: 5001}), (p5002:Policy {policy_id: 5002}), (p5003:Policy {policy_id: 5003}),
             (p5004:Policy {policy_id: 5004}), (p5005:Policy {policy_id: 5005}), (p5006:Policy {policy_id: 5006}),
-            (p5007:Policy {policy_id: 5007}), (p5008:Policy {policy_id: 5008}), (p5009:Policy {policy_id: 5009})
+            (p5007:Policy {policy_id: 5007}), (p5008:Policy {policy_id: 5008}), (p5009:Policy {policy_id: 5009}),
+            (p5010:Policy {policy_id: 5010}), (p5011:Policy {policy_id: 5011}), (p5012:Policy {policy_id: 5012}),
+            (p5013:Policy {policy_id: 5013}), (p5015:Policy {policy_id: 5015})
 
       CREATE (v101)-[:HAS_IMAGE]->(:VehicleImage {image_no: 1, image_type: 'JPEG', image_data: 'FFD8FFE000104A46'}),
              (v101)-[:HAS_IMAGE]->(:VehicleImage {image_no: 2, image_type: 'JPEG', image_data: 'FFD8FFE000104A47'}),
@@ -112,7 +147,13 @@ async function seed() {
              (v105)-[:HAS_IMAGE]->(:VehicleImage {image_no: 1, image_type: 'PNG',  image_data: '89504E470D0A1A0B'}),
              (v105)-[:HAS_IMAGE]->(:VehicleImage {image_no: 2, image_type: 'PNG',  image_data: '89504E470D0A1A0C'}),
              (v107)-[:HAS_IMAGE]->(:VehicleImage {image_no: 1, image_type: 'JPEG', image_data: 'FFD8FFE000104A49'}),
-             (v108)-[:HAS_IMAGE]->(:VehicleImage {image_no: 1, image_type: 'JPEG', image_data: 'FFD8FFE000104A4A'})
+             (v108)-[:HAS_IMAGE]->(:VehicleImage {image_no: 1, image_type: 'JPEG', image_data: 'FFD8FFE000104A4A'}),
+             (v111)-[:HAS_IMAGE]->(:VehicleImage {image_no: 1, image_type: 'JPEG', image_data: 'FFD8FFE000104A4D'}),
+             (v112)-[:HAS_IMAGE]->(:VehicleImage {image_no: 1, image_type: 'PNG',  image_data: '89504E470D0A1A0D'}),
+             (v113)-[:HAS_IMAGE]->(:VehicleImage {image_no: 1, image_type: 'JPEG', image_data: 'FFD8FFE000104A4E'}),
+             (v114)-[:HAS_IMAGE]->(:VehicleImage {image_no: 1, image_type: 'JPEG', image_data: 'FFD8FFE000104A4F'}),
+             (v115)-[:HAS_IMAGE]->(:VehicleImage {image_no: 1, image_type: 'PNG',  image_data: '89504E470D0A1A0E'}),
+             (v116)-[:HAS_IMAGE]->(:VehicleImage {image_no: 1, image_type: 'JPEG', image_data: 'FFD8FFE000104A50'})
 
       CREATE (p5001)-[:GENERATES]->(cl7001:Claim {claim_id: 7001, claim_date: date('2026-03-12'), claim_amount: 45000, claim_status: 'SETTLED'}),
              (p5002)-[:GENERATES]->(cl7002:Claim {claim_id: 7002, claim_date: date('2026-01-20'), claim_amount: 120000, claim_status: 'APPROVED'}),
@@ -123,7 +164,12 @@ async function seed() {
              (p5008)-[:GENERATES]->(cl7007:Claim {claim_id: 7007, claim_date: date('2026-09-02'), claim_amount: 95000, claim_status: 'PENDING'}),
              (p5001)-[:GENERATES]->(cl7008:Claim {claim_id: 7008, claim_date: date('2026-08-09'), claim_amount: 15000, claim_status: 'SETTLED'}),
              (p5003)-[:GENERATES]->(cl7009:Claim {claim_id: 7009, claim_date: date('2026-05-05'), claim_amount: 52000, claim_status: 'APPROVED'}),
-             (p5006)-[:GENERATES]->(cl7010:Claim {claim_id: 7010, claim_date: date('2025-11-11'), claim_amount: 27000, claim_status: 'SETTLED'})
+             (p5006)-[:GENERATES]->(cl7010:Claim {claim_id: 7010, claim_date: date('2025-11-11'), claim_amount: 27000, claim_status: 'SETTLED'}),
+             (p5010)-[:GENERATES]->(cl7011:Claim {claim_id: 7011, claim_date: date('2026-06-12'), claim_amount: 42000, claim_status: 'APPROVED'}),
+             (p5011)-[:GENERATES]->(cl7012:Claim {claim_id: 7012, claim_date: date('2026-07-05'), claim_amount: 88000, claim_status: 'PENDING'}),
+             (p5012)-[:GENERATES]->(cl7013:Claim {claim_id: 7013, claim_date: date('2026-08-22'), claim_amount: 160000, claim_status: 'SETTLED'}),
+             (p5013)-[:GENERATES]->(cl7014:Claim {claim_id: 7014, claim_date: date('2026-09-15'), claim_amount: 25000, claim_status: 'REJECTED'}),
+             (p5015)-[:GENERATES]->(cl7015:Claim {claim_id: 7015, claim_date: date('2026-10-02'), claim_amount: 55000, claim_status: 'PENDING'})
 
       CREATE (cl7001)-[:HAS_DOCUMENT]->(:ClaimDocument {doc_no: 1, doc_type: 'FIR', doc_data: '25504446'}),
              (cl7001)-[:HAS_DOCUMENT]->(:ClaimDocument {doc_no: 2, doc_type: 'ESTIMATE', doc_data: '25504447'}),
@@ -135,7 +181,13 @@ async function seed() {
              (cl7005)-[:HAS_DOCUMENT]->(:ClaimDocument {doc_no: 3, doc_type: 'ESTIMATE', doc_data: '2550444A'}),
              (cl7006)-[:HAS_DOCUMENT]->(:ClaimDocument {doc_no: 1, doc_type: 'PHOTO', doc_data: 'FFD8FFE3'}),
              (cl7007)-[:HAS_DOCUMENT]->(:ClaimDocument {doc_no: 1, doc_type: 'FIR', doc_data: '2550444B'}),
-             (cl7008)-[:HAS_DOCUMENT]->(:ClaimDocument {doc_no: 1, doc_type: 'ESTIMATE', doc_data: '2550444C'})
+             (cl7008)-[:HAS_DOCUMENT]->(:ClaimDocument {doc_no: 1, doc_type: 'ESTIMATE', doc_data: '2550444C'}),
+             (cl7011)-[:HAS_DOCUMENT]->(:ClaimDocument {doc_no: 1, doc_type: 'ESTIMATE', doc_data: '2550444D'}),
+             (cl7012)-[:HAS_DOCUMENT]->(:ClaimDocument {doc_no: 1, doc_type: 'PHOTO', doc_data: 'FFD8FFE4'}),
+             (cl7013)-[:HAS_DOCUMENT]->(:ClaimDocument {doc_no: 1, doc_type: 'FIR', doc_data: '2550444E'}),
+             (cl7013)-[:HAS_DOCUMENT]->(:ClaimDocument {doc_no: 2, doc_type: 'ESTIMATE', doc_data: '2550444F'}),
+             (cl7014)-[:HAS_DOCUMENT]->(:ClaimDocument {doc_no: 1, doc_type: 'PHOTO', doc_data: 'FFD8FFE5'}),
+             (cl7015)-[:HAS_DOCUMENT]->(:ClaimDocument {doc_no: 1, doc_type: 'ESTIMATE', doc_data: '25504450'})
 
       CREATE (p5001)-[:PAID_THROUGH]->(pay9001:Payment {payment_id: 9001, payment_date: date('2026-01-01'), payment_method: 'UPI', amount: 9250}),
              (p5001)-[:PAID_THROUGH]->(pay9002:Payment {payment_id: 9002, payment_date: date('2026-07-01'), payment_method: 'UPI', amount: 9250}),
@@ -148,7 +200,20 @@ async function seed() {
              (p5007)-[:PAID_THROUGH]->(pay9009:Payment {payment_id: 9009, payment_date: date('2026-07-01'), payment_method: 'UPI', amount: 10500}),
              (p5008)-[:PAID_THROUGH]->(pay9010:Payment {payment_id: 9010, payment_date: date('2026-08-05'), payment_method: 'CARD', amount: 14250}),
              (p5008)-[:PAID_THROUGH]->(pay9011:Payment {payment_id: 9011, payment_date: date('2026-09-05'), payment_method: 'UPI', amount: 14250}),
-             (p5009)-[:PAID_THROUGH]->(pay9012:Payment {payment_id: 9012, payment_date: date('2026-04-12'), payment_method: 'CHEQUE', amount: 15500})
+             (p5009)-[:PAID_THROUGH]->(pay9012:Payment {payment_id: 9012, payment_date: date('2026-04-12'), payment_method: 'CHEQUE', amount: 15500}),
+             (pay9013:Payment {payment_id: 9013, payment_date: date('2026-02-15'), payment_method: 'UPI', amount: 11250}),
+             (pay9014:Payment {payment_id: 9014, payment_date: date('2026-08-15'), payment_method: 'UPI', amount: 11250}),
+             (pay9015:Payment {payment_id: 9015, payment_date: date('2026-03-10'), payment_method: 'CARD', amount: 29000}),
+             (pay9016:Payment {payment_id: 9016, payment_date: date('2026-04-01'), payment_method: 'NETBANKING', amount: 17000}),
+             (pay9017:Payment {payment_id: 9017, payment_date: date('2026-05-18'), payment_method: 'CARD', amount: 14500}),
+             (pay9018:Payment {payment_id: 9018, payment_date: date('2026-06-20'), payment_method: 'UPI', amount: 8200})
+
+      CREATE (p5010)-[:PAID_THROUGH]->(pay9013),
+             (p5010)-[:PAID_THROUGH]->(pay9014),
+             (p5011)-[:PAID_THROUGH]->(pay9015),
+             (p5012)-[:PAID_THROUGH]->(pay9016),
+             (p5013)-[:PAID_THROUGH]->(pay9017),
+             (p5015)-[:PAID_THROUGH]->(pay9018)
 
       CREATE (pay9001)-[:HAS_RECEIPT]->(:PaymentReceipt {receipt_no: 1, receipt_date: date('2026-01-01'), receipt_file: 'rcpt_9001_1.pdf'}),
              (pay9002)-[:HAS_RECEIPT]->(:PaymentReceipt {receipt_no: 1, receipt_date: date('2026-07-01'), receipt_file: 'rcpt_9002_1.pdf'}),
@@ -158,7 +223,13 @@ async function seed() {
              (pay9006)-[:HAS_RECEIPT]->(:PaymentReceipt {receipt_no: 1, receipt_date: date('2026-05-20'), receipt_file: 'rcpt_9006_1.pdf'}),
              (pay9009)-[:HAS_RECEIPT]->(:PaymentReceipt {receipt_no: 1, receipt_date: date('2026-07-01'), receipt_file: 'rcpt_9009_1.pdf'}),
              (pay9010)-[:HAS_RECEIPT]->(:PaymentReceipt {receipt_no: 1, receipt_date: date('2026-08-05'), receipt_file: 'rcpt_9010_1.pdf'}),
-             (pay9011)-[:HAS_RECEIPT]->(:PaymentReceipt {receipt_no: 1, receipt_date: date('2026-09-05'), receipt_file: 'rcpt_9011_1.pdf'});
+             (pay9011)-[:HAS_RECEIPT]->(:PaymentReceipt {receipt_no: 1, receipt_date: date('2026-09-05'), receipt_file: 'rcpt_9011_1.pdf'}),
+             (pay9013)-[:HAS_RECEIPT]->(:PaymentReceipt {receipt_no: 1, receipt_date: date('2026-02-15'), receipt_file: 'rcpt_9013_1.pdf'}),
+             (pay9014)-[:HAS_RECEIPT]->(:PaymentReceipt {receipt_no: 1, receipt_date: date('2026-08-15'), receipt_file: 'rcpt_9014_1.pdf'}),
+             (pay9015)-[:HAS_RECEIPT]->(:PaymentReceipt {receipt_no: 1, receipt_date: date('2026-03-10'), receipt_file: 'rcpt_9015_1.pdf'}),
+             (pay9016)-[:HAS_RECEIPT]->(:PaymentReceipt {receipt_no: 1, receipt_date: date('2026-04-01'), receipt_file: 'rcpt_9016_1.pdf'}),
+             (pay9017)-[:HAS_RECEIPT]->(:PaymentReceipt {receipt_no: 1, receipt_date: date('2026-05-18'), receipt_file: 'rcpt_9017_1.pdf'}),
+             (pay9018)-[:HAS_RECEIPT]->(:PaymentReceipt {receipt_no: 1, receipt_date: date('2026-06-20'), receipt_file: 'rcpt_9018_1.pdf'});
     `);
     console.log('Claims, Payments, and Weak Entities created.');
 
