@@ -150,3 +150,11 @@ ORDER BY cl.claim_id;
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+## Recent Updates
+
+- Fixed sidebar layout to stay visible while scrolling.
+- Expanded Neo4j dataset to 125 nodes (15 customers, 16 vehicles, 15 policies, 15 claims, 18 payments).
+- Added `scripts/insert_more_records.js` to seed additional records.
+- Updated `.gitignore` to exclude report, presentation, and generator scripts.
+- Updated commit message to reflect these changes.
