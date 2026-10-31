@@ -1,11 +1,15 @@
 # Vehicle Insurance Management System (BACSE202 DA3)
 ### Modern Graph Database Implementation with Neo4j & Cypher
 
-**Student Name:** Vinayak Tripathi  
-**Registration Number:** 25BRS1259  
-**Course Code:** BACSE202 – Database Systems  
+**Course:** BACSE202 – Database Systems  
 **Faculty:** Dr. Rajesh M  
-**Submission Deadline:** 23-10-2026  
+
+### Team Members
+| S.No | Name | Registration Number |
+| :---: | :--- | :--- |
+| 1 | **Vinayak Tripathi** | 25BRS1259 |
+| 2 | **Dhruv Upadhyaya** | 25BRS1232 |
+| 3 | **Arnav Singla** | 25BRS1269 |  
 
 ---
 
@@ -150,11 +154,3 @@ ORDER BY cl.claim_id;
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
-## Recent Updates
-
-- Fixed sidebar layout to stay visible while scrolling.
-- Expanded Neo4j dataset to 125 nodes (15 customers, 16 vehicles, 15 policies, 15 claims, 18 payments).
-- Added `scripts/insert_more_records.js` to seed additional records.
-- Updated `.gitignore` to exclude report, presentation, and generator scripts.
-- Updated commit message to reflect these changes.
